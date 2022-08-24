@@ -1,0 +1,34 @@
+version: '3'
+services:
+  db_site2.example.com:
+    image: mysql:8.0
+    container_name: "db_site2.example.com"
+    volumes:
+      - ./docker/db/mysql:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_pass_fB3uWvTS
+      MYSQL_DATABASE: site2.example.com
+      MYSQL_USER: site2.example.com
+      MYSQL_PASSWORD: user_pass_LvpnlUJH6s
+
+  site2.example.com:
+    image: wordpress:latest
+    container_name: "site2.example.com"
+    volumes:
+      - ./web/public_html/:/var/www/html
+      - ./php/php.ini:/usr/local/etc/php/conf.d/php.ini
+    restart: always
+    depends_on:
+      - db_site2.example.com
+    environment:
+      WORDPRESS_DB_HOST: db_site2.example.com:3306
+      WORDPRESS_DB_NAME: site2.example.com
+      WORDPRESS_DB_USER: site2.example.com
+      WORDPRESS_DB_PASSWORD: user_pass_LvpnlUJH6s
+      VIRTUAL_HOST: site2.example.com
+
+networks:
+  default:
+    external: true
+    name: shared
